@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Header from "./components/Header/Header";
+import Main from "./components/Main/Main";
+import Footer from "./components/Footer/Footer";
+import tasks from "./store/tasks";
+import { observer } from "mobx-react-lite";
 
-function App() {
+const App = observer(() => {
+  const getLocalStorageCards = () => {
+    let storage = [];
+    let keys = Object.keys(localStorage);
+    let i = keys.length;
+    while (i--) {
+      storage[keys[i]] = JSON.parse(localStorage.getItem(keys[i]));
+    }
+
+    storage.shift();
+    for (let i = 0; i < storage.length; i++) {
+      if (storage[i].category === "backlog") {
+        tasks.backlog.push(storage[i]);
+      } else if (storage[i].category === "ready") {
+        tasks.ready.push(storage[i]);
+      } else if (storage[i].category === "inProgress") {
+        tasks.inProgress.push(storage[i]);
+      } else if (storage[i].category === "finished") {
+        tasks.finished.push(storage[i]);
+      }
+    }
+  };
+
+  getLocalStorageCards();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <Main />
+      <Footer />
     </div>
   );
-}
+});
 
 export default App;
